@@ -28,8 +28,7 @@ public static class AuthorizationEndpoints
     private static IResult OAuthBegin(IConfiguration configuration)
     {
         var clientId = configuration["Strava:ClientId"];
-        var baseUrl = configuration["Application:BaseUrl"];
-        var redirectUri = "http://localhost:5148/authorization/callback";
+        var redirectUri = $"{configuration["Application:BaseUrl"]}/authorization/callback";
         var scope = "activity:read_all,activity:write";
 
         var authUrl = $"https://www.strava.com/oauth/authorize?client_id={clientId}&redirect_uri={redirectUri}&response_type=code&approval_prompt=force&scope={scope}";
