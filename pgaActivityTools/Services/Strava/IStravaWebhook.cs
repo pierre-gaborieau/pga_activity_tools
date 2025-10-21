@@ -1,6 +1,6 @@
 using pgaActivityTools.Models.Webhook;
 
-namespace pgaActivityTools.Services.StravaWebhook;
+namespace pgaActivityTools.Services.Strava;
 
 public interface IStravaWebhook
 {

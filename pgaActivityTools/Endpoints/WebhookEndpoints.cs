@@ -1,6 +1,6 @@
 using pgaActivityTools.Common.OpenApi;
 using pgaActivityTools.Models.Webhook;
-using pgaActivityTools.Services.StravaWebhook;
+using pgaActivityTools.Services.Strava;
 
 namespace pgaActivityTools.Endpoints;
 

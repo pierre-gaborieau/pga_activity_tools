@@ -2,10 +2,9 @@ using pgaActivityTools.Data;
 using pgaActivityTools.Models.Database;
 using pgaActivityTools.Models.Weather;
 using pgaActivityTools.Models.Webhook;
-using pgaActivityTools.Services.Strava;
 using pgaActivityTools.Services.Weather;
 
-namespace pgaActivityTools.Services.StravaWebhook.Service;
+namespace pgaActivityTools.Services.Strava.Service;
 
 public class StravaWebhookService : IStravaWebhook
 {
@@ -15,18 +14,21 @@ public class StravaWebhookService : IStravaWebhook
     private readonly IWeather _weatherService;
     private readonly ILogger<StravaWebhookService> _logger;
     private readonly IServiceScopeFactory _scopeFactory;
+    private readonly IStravaTokenRefresher _tokenRefresher;
     public StravaWebhookService(
            HttpClient httpClient,
            IConfiguration configuration,
            IStravaService stravaService,
            ILogger<StravaWebhookService> logger,
            IWeather weatherService,
-           IServiceScopeFactory scopeFactory)
+           IServiceScopeFactory scopeFactory,
+           IStravaTokenRefresher tokenRefresher)
     {
         _httpClient = httpClient;
         _configuration = configuration;
         _stravaService = stravaService;
         _logger = logger;
+        _tokenRefresher = tokenRefresher;
         _weatherService = weatherService;
         _httpClient.BaseAddress = new Uri("https://www.strava.com/api/v3/");
         _scopeFactory = scopeFactory;
@@ -166,7 +168,13 @@ public class StravaWebhookService : IStravaWebhook
 
             _logger.LogInformation("Found access token for athlete {AthleteId}", webhookEvent.Owner_id);
 
-            var activity = await _stravaService.GetActivityByIdAsync(token.AccessToken, webhookEvent.Object_id);
+            var validToken = await _tokenRefresher.GetValidAccessTokenAsync(webhookEvent.Owner_id);
+            if (validToken == null)
+            {
+                _logger.LogWarning("Could not obtain valid access token for athlete {AthleteId}", webhookEvent.Owner_id);
+                return;
+            }
+            var activity = await _stravaService.GetActivityByIdAsync(validToken, webhookEvent.Object_id);
 
             if (activity != null)
             {

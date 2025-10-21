@@ -5,8 +5,7 @@ using pgaActivityTools.Endpoints;
 using pgaActivityTools.Services.DatabaseMigrator;
 using pgaActivityTools.Services.DatabaseMigrator.Service;
 using pgaActivityTools.Services.Strava;
-using pgaActivityTools.Services.StravaWebhook;
-using pgaActivityTools.Services.StravaWebhook.Service;
+using pgaActivityTools.Services.Strava.Service;
 using pgaActivityTools.Services.Version;
 using pgaActivityTools.Services.Version.Service;
 using pgaActivityTools.Services.Weather;
@@ -34,7 +33,8 @@ builder.Services
 
 // Ajout des services HTTP
 builder.Services.AddSingleton<IDatabaseMigrator, DatabaseMigratorService>();
-builder.Services.AddSingleton<IVersion, VersionService>();
+builder.Services.AddScoped<IVersion, VersionService>();
+builder.Services.AddHttpClient<IStravaTokenRefresher, StravaTokenRefresherService>();
 builder.Services.AddHttpClient<IWeather, WeatherService>();
 builder.Services.AddHttpClient<IStravaService, StravaService>();
 builder.Services.AddHttpClient<IStravaWebhook, StravaWebhookService>();
