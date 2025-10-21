@@ -1,0 +1,15 @@
+# Simulated daily request to your render project so that the service doesn't go down
+name: 10 min ping
+
+on:
+  schedule:
+    - cron: '*/7 * * * *'  # Runs every 7 mins
+  workflow_dispatch:  # Allows manual triggering
+
+jobs:
+  curl-website:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Run cURL on Website
+        run: curl -I https://pga-activity-tools.onrender.com/health
