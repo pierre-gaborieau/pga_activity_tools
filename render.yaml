@@ -1,0 +1,51 @@
+services:
+  # Service PostgreSQL
+  - type: pserv
+    name: pga-postgres
+    env: docker
+    plan: free
+    region: frankfurt
+    databases:
+      - name: pgaactivity
+        user: pgauser
+
+  # Service Web API
+  - type: web
+    name: pga-activity-tools
+    env: docker
+    region: frankfurt
+    plan: free
+    dockerfilePath: ./Dockerfile
+    envVars:
+      - key: ASPNETCORE_ENVIRONMENT
+        value: Production
+      - key: ASPNETCORE_URLS
+        value: http://+:8080
+      - key: ConnectionStrings__DefaultConnection
+        fromDatabase:
+          name: pga-postgres
+          property: connectionString
+      - key: Jwt__Key
+        generateValue: true
+      - key: Jwt__Issuer
+        value: pga-activity-tools
+      - key: Jwt__Audience
+        value: pga-activity-tools-api
+      - key: Admin__Username
+        sync: false
+      - key: Admin__Password
+        sync: false
+      - key: Strava__ClientId
+        sync: false
+      - key: Strava__ClientSecret
+        sync: false
+      - key: Strava__WebhookCallbackUrl
+        sync: false
+      - key: Strava__WebhookVerifyToken
+        sync: false
+      - key: OpenWeatherMap__ApiKey
+        sync: false
+      - key: Application__BaseUrl
+        value: https://pga-activity-tools.onrender.com
+    healthCheckPath: /health
+    autoDeploy: true
