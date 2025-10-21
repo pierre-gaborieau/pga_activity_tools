@@ -1,6 +1,5 @@
 .vscode/
 obj/
 appsettings.Development.json
-appsettings.json
 bin/
 .DS_Store
