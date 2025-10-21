@@ -4,5 +4,6 @@ public enum OpenApiTags
 {
     System,
     WebHook,
-    Auth,
+    Authorization,
+    Authentication,
 }

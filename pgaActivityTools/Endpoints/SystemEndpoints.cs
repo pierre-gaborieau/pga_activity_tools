@@ -10,6 +10,7 @@ public static class SystemEndpoints
     {
         var group = routes.MapGroup("/")
             .WithTags(OpenApiTags.System.ToString())
+            .AllowAnonymous()
             .WithOpenApi();
 
         group.MapGet("/version", (IVersion version) => GetVersion(version))

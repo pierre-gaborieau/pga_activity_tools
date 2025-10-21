@@ -6,12 +6,13 @@ using pgaActivityTools.Models.Strava;
 
 namespace pgaActivityTools.Endpoints;
 
-public static class AuthEndpoints
+public static class AuthorizationEndpoints
 {
-    public static IEndpointRouteBuilder MapAuthEndpoints(this IEndpointRouteBuilder routes)
+    public static IEndpointRouteBuilder MapAuthorizationEndpoints(this IEndpointRouteBuilder routes)
     {
-        var group = routes.MapGroup("/auth")
-            .WithTags(OpenApiTags.Auth.ToString())
+        var group = routes.MapGroup("/authorization")
+            .WithTags(OpenApiTags.Authorization.ToString())
+            .AllowAnonymous()
             .WithOpenApi();
 
         group.MapGet("", OAuthBegin)
@@ -28,7 +29,7 @@ public static class AuthEndpoints
     {
         var clientId = configuration["Strava:ClientId"];
         var baseUrl = configuration["Application:BaseUrl"];
-        var redirectUri = "http://localhost:5148/auth/callback";
+        var redirectUri = "http://localhost:5148/authorization/callback";
         var scope = "activity:read_all,activity:write";
 
         var authUrl = $"https://www.strava.com/oauth/authorize?client_id={clientId}&redirect_uri={redirectUri}&response_type=code&approval_prompt=force&scope={scope}";

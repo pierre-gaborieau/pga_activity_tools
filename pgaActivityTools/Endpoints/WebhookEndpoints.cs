@@ -13,18 +13,23 @@ public static class WebhookEndpoints
             .WithOpenApi();
 
         group.MapPost("/subscribe", WebhookSubscription)
+        .RequireAuthorization()
             .WithName("CreateStravaWebhookSubscription");
 
         group.MapGet("", WebhookValidation)
+            .AllowAnonymous()
             .WithName("ValidateStravaWebhook");
 
         group.MapPost("", WebhookEvent)
+            .AllowAnonymous()
             .WithName("ReceiveStravaWebhookEvent");
 
         group.MapGet("/subscriptions", GetSubscriptions)
+        .RequireAuthorization()
             .WithName("GetStravaWebhookSubscriptions");
 
         group.MapDelete("/subscribe/{subscriptionId}", DeleteSubscription)
+        .RequireAuthorization()
             .WithName("DeleteStravaWebhookSubscription");
 
         return routes;
