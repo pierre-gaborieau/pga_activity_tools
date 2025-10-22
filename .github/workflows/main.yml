@@ -3,7 +3,7 @@ name: 10 min ping
 
 on:
   schedule:
-    - cron: '*/7 * * * *'  # Runs every 7 mins
+    - cron: '*/5 * * * *'  # Runs every 7 mins
   workflow_dispatch:  # Allows manual triggering
 
 jobs:
