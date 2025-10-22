@@ -33,8 +33,7 @@ public class StravaTokenRefresherService : IStravaTokenRefresher
         var _dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
 
         var token = await _dbContext.AthleteTokens
-            .Where(at => at.AthleteId == athleteId && at.ExpiresAt > DateTime.UtcNow)
-            .OrderByDescending(at => at.ExpiresAt)
+            .Where(at => at.AthleteId == athleteId)
             .FirstOrDefaultAsync();
 
         if (token == null)
@@ -43,7 +42,7 @@ public class StravaTokenRefresherService : IStravaTokenRefresher
             return null;
         }
 
-        if (token.ExpiresAt > DateTime.UtcNow.AddHours(5))
+        if (token.ExpiresAt > DateTime.UtcNow.AddMinutes(5))
         {
             // Token is still valid
             _logger.LogInformation("Using existing valid token for athlete {AthleteId}", athleteId);
