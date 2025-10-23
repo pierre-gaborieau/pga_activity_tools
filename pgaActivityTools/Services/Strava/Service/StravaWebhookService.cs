@@ -299,6 +299,11 @@ public class StravaWebhookService : IStravaWebhook
             return $"{currentDescription}\n\n{weatherInfo}";
         }
 
+        if(_configuration["Environment"] == "Development")
+        {
+            weatherInfo = $"[DEV MODE] {weatherInfo}";
+        }
+
         return weatherInfo;
     }
 
