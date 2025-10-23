@@ -29,7 +29,7 @@ public static class SystemEndpoints
         return routes;
     }
 
-    private static IResult GetVersion(IVersion version)
+    internal static IResult GetVersion(IVersion version)
     {
         var versionInfo = version.GetVersionInfo();
         return Results.Ok(versionInfo);

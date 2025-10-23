@@ -31,6 +31,7 @@
     <PackageReference Include="Swashbuckle.AspNetCore" Version="9.0.6" />
     <PackageReference Include="Swashbuckle.AspNetCore.Swagger" Version="9.0.6" />
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.2.1" />
+    <InternalsVisibleTo Include="pgaActivityTools.Tests" />
   </ItemGroup>
 
 </Project>
