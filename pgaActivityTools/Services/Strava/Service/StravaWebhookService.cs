@@ -203,8 +203,8 @@ public class StravaWebhookService : IStravaWebhook
                             weather.Description, weather.Temperature);
 
                         // Mettre à jour la description de l'activité avec la météo
-                        updatedDescription = BuildDescriptionWithWeather(activity.Description, weather);
-                        updatedTitle = BuildTitleWithWeather(activity.Name, weather, activity.Start_date.Hour >= 6 && activity.Start_date.Hour <= 18);
+                        updatedDescription = BuildDescriptionWithWeather(updatedDescription, weather);
+                        updatedTitle = BuildTitleWithWeather(updatedTitle, weather, activity.Start_date.Hour >= 6 && activity.Start_date.Hour <= 18);
                         activityUpdated = true;
                     }
                     else
@@ -339,15 +339,15 @@ public class StravaWebhookService : IStravaWebhook
     private string BuildDescriptionWithWeather(string? currentDescription, WeatherData weather)
     {
         var weatherInfo = $@"🌡️ {weather.Temperature}°C (ressenti : {weather.FeelsLike}°C) ☁️ {weather.Description} 💨 Vent : {weather.WindSpeed} m/s";
+        
+        if (_configuration["Environment"] == "Development")
+        {
+            weatherInfo = $"[DEV MODE] {weatherInfo}";
+        }
 
         if (!string.IsNullOrWhiteSpace(currentDescription))
         {
             return $"{currentDescription}\n\n{weatherInfo}";
-        }
-
-        if (_configuration["Environment"] == "Development")
-        {
-            weatherInfo = $"[DEV MODE] {weatherInfo}";
         }
 
         return weatherInfo;
