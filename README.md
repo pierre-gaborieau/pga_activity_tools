@@ -1,0 +1,1 @@
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=pierre-gaborieau_pga_activity_tools&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=pierre-gaborieau_pga_activity_tools)
