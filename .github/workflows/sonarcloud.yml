@@ -27,24 +27,8 @@ jobs:
         with:
           dotnet-version: 9.0.x
       
-      - name: Cache SonarCloud packages
-        uses: actions/cache@v4
-        with:
-          path: ~/.sonar/cache
-          key: ${{ runner.os }}-sonar
-          restore-keys: ${{ runner.os }}-sonar
-      
-      - name: Cache SonarCloud scanner
-        uses: actions/cache@v4
-        with:
-          path: ./.sonar/scanner
-          key: ${{ runner.os }}-sonar-scanner
-          restore-keys: ${{ runner.os }}-sonar-scanner
-      
-      - name: Install tools
-        run: |
-          dotnet tool install --global dotnet-sonarscanner
-          dotnet tool install --global coverlet.console
+      - name: Install SonarScanner
+        run: dotnet tool install --global dotnet-sonarscanner
       
       - name: Restore dependencies
         run: dotnet restore
@@ -59,22 +43,57 @@ jobs:
             /o:"pierre-gaborieau" \
             /d:sonar.token="${SONAR_TOKEN}" \
             /d:sonar.host.url="https://sonarcloud.io" \
-            /d:sonar.cs.opencover.reportsPaths="**/TestResults/**/coverage.opencover.xml"
+            /d:sonar.cs.opencover.reportsPaths="coverage.opencover.xml" \
+            /d:sonar.coverage.exclusions="**/Migrations/**,**/Program.cs,**/*Dto.cs"
       
       - name: Build
         run: dotnet build --no-restore
       
-      - name: Test with coverage
+      - name: Test with coverage (XPlat)
         run: |
           dotnet test --no-build --verbosity normal \
-            /p:CollectCoverage=true \
-            /p:CoverletOutputFormat=opencover \
-            /p:CoverletOutput=./TestResults/
+            --collect:"XPlat Code Coverage" \
+            --results-directory ./TestResults/ \
+            -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover
       
-      - name: List coverage files (debug)
+      - name: Move coverage file to root
         run: |
-          echo "Looking for coverage files..."
-          find . -name "*.opencover.xml" -type f
+          echo "🔍 Searching for coverage files..."
+          find TestResults -name "coverage.opencover.xml" -type f
+          
+          COVERAGE_FILE=$(find TestResults -name "coverage.opencover.xml" -type f | head -1)
+          
+          if [ -z "$COVERAGE_FILE" ]; then
+            echo "❌ ERROR: No coverage file found!"
+            echo "TestResults content:"
+            ls -R TestResults/
+            exit 1
+          fi
+          
+          echo "✅ Coverage file found: $COVERAGE_FILE"
+          cp "$COVERAGE_FILE" ./coverage.opencover.xml
+          
+          echo ""
+          echo "📊 Coverage file info:"
+          ls -lh coverage.opencover.xml
+          
+          echo ""
+          echo "🔍 Checking content:"
+          echo "Total lines:"
+          wc -l coverage.opencover.xml
+          
+          echo ""
+          echo "Files covered:"
+          grep -o 'fullPath="[^"]*"' coverage.opencover.xml | head -20
+          
+          echo ""
+          echo "Checking for VersionService:"
+          if grep -q "VersionService" coverage.opencover.xml; then
+            echo "✅ VersionService found in coverage"
+            grep "VersionService" coverage.opencover.xml | head -5
+          else
+            echo "⚠️ VersionService not found in coverage"
+          fi
       
       - name: End SonarScanner
         env:

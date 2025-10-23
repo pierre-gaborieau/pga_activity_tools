@@ -3,3 +3,4 @@ obj/
 appsettings.Development.json
 bin/
 .DS_Store
+TestResults/
