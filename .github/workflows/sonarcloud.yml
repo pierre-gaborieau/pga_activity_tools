@@ -55,13 +55,12 @@ jobs:
         run: |
           dotnet sonarscanner begin \
             /k:"pierre-gaborieau_pga_activity_tools" \
-            /o:"pierre-gaborieau" \
             /d:sonar.token="${SONAR_TOKEN}" \
-            /d:sonar.host.url="https://sonarcloud.io" \
-            /d:sonar.cs.vscoveragexml.reportsPaths=coverage.xml
-          
-          dotnet build pgaActivityTools/pgaActivityTools.csproj --no-incremental
-          
-          dotnet-coverage collect 'dotnet test' -f xml -o 'coverage.xml'
-          
+            /d:sonar.cs.opencover.reportsPaths=coverage.xml
+          dotnet build --no-incremental
+          coverlet .\CovExample.Tests\bin\Debug\net6.0\CovExample.Tests.dll
+              --target "dotnet" 
+              --targetargs "test --no-build"
+              -f=opencover 
+              -o="coverage.xml"
           dotnet sonarscanner end /d:sonar.token="${SONAR_TOKEN}"
