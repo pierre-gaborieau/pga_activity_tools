@@ -5,6 +5,8 @@ VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "pgaActivityTools", "pgaActivityTools\pgaActivityTools.csproj", "{C81662FA-53CB-4AD5-B698-A1D8297CF2BD}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "pgaActivityTools.Tests", "pgaActivityTools.Tests\pgaActivityTools.Tests.csproj", "{9D4B4F21-B7F5-4B45-81D9-0E49B98441CE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,18 @@ Global
 		{C81662FA-53CB-4AD5-B698-A1D8297CF2BD}.Release|x64.Build.0 = Release|Any CPU
 		{C81662FA-53CB-4AD5-B698-A1D8297CF2BD}.Release|x86.ActiveCfg = Release|Any CPU
 		{C81662FA-53CB-4AD5-B698-A1D8297CF2BD}.Release|x86.Build.0 = Release|Any CPU
+		{9D4B4F21-B7F5-4B45-81D9-0E49B98441CE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9D4B4F21-B7F5-4B45-81D9-0E49B98441CE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9D4B4F21-B7F5-4B45-81D9-0E49B98441CE}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{9D4B4F21-B7F5-4B45-81D9-0E49B98441CE}.Debug|x64.Build.0 = Debug|Any CPU
+		{9D4B4F21-B7F5-4B45-81D9-0E49B98441CE}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{9D4B4F21-B7F5-4B45-81D9-0E49B98441CE}.Debug|x86.Build.0 = Debug|Any CPU
+		{9D4B4F21-B7F5-4B45-81D9-0E49B98441CE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9D4B4F21-B7F5-4B45-81D9-0E49B98441CE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9D4B4F21-B7F5-4B45-81D9-0E49B98441CE}.Release|x64.ActiveCfg = Release|Any CPU
+		{9D4B4F21-B7F5-4B45-81D9-0E49B98441CE}.Release|x64.Build.0 = Release|Any CPU
+		{9D4B4F21-B7F5-4B45-81D9-0E49B98441CE}.Release|x86.ActiveCfg = Release|Any CPU
+		{9D4B4F21-B7F5-4B45-81D9-0E49B98441CE}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
