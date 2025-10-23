@@ -57,6 +57,7 @@ jobs:
             /k:"pierre-gaborieau_pga_activity_tools" \
             /d:sonar.token="${SONAR_TOKEN}" \
             /d:sonar.cs.opencover.reportsPaths=coverage.xml
+            /d:sonar.host.url="https://sonarcloud.io" \
           dotnet build --no-incremental
           coverlet .\CovExample.Tests\bin\Debug\net6.0\CovExample.Tests.dll
               --target "dotnet" 
