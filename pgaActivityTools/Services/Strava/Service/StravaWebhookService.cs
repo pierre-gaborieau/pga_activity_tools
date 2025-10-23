@@ -1,5 +1,6 @@
 using pgaActivityTools.Data;
 using pgaActivityTools.Models.Database;
+using pgaActivityTools.Models.Strava.Enum;
 using pgaActivityTools.Models.Weather;
 using pgaActivityTools.Models.Webhook;
 using pgaActivityTools.Services.Weather;
@@ -178,16 +179,23 @@ public class StravaWebhookService : IStravaWebhook
 
             if (activity != null)
             {
+                bool activityUpdated = false;
+                string updatedDescription = activity.Description ?? "";
+                string updatedTitle = activity.Name;
+                WeatherData? weather = null;
+
+                (updatedTitle, activityUpdated) = AddSportEmojiToTitle(activity.Name, activity.Sport_type);
+
                 if (activity.Start_latlng != null && activity.Start_latlng.Length == 2)
                 {
                     _logger.LogInformation("Activity details: {Name}, Lat: {Lat}, Lng: {Lng}",
                         activity.Name, activity.Start_latlng[0], activity.Start_latlng[1]);
 
                     // Récupérer la météo
-                    var weather = await _weatherService.GetWeatherAsync(
-                        activity.Start_latlng[0],
-                        activity.Start_latlng[1],
-                        activity.Start_date);
+                    weather = await _weatherService.GetWeatherAsync(
+                         activity.Start_latlng[0],
+                         activity.Start_latlng[1],
+                         activity.Start_date);
 
                     if (weather != null)
                     {
@@ -195,34 +203,9 @@ public class StravaWebhookService : IStravaWebhook
                             weather.Description, weather.Temperature);
 
                         // Mettre à jour la description de l'activité avec la météo
-                        var updatedDescription = BuildDescriptionWithWeather(activity.Description, weather);
-                        var updatedTitle = BuildTitleWithWeather(activity.Name, weather, activity.Start_date.Hour >= 6 && activity.Start_date.Hour <= 18);
-
-                        var success = await UpdateActivityAsync(
-                            token.AccessToken,
-                            webhookEvent.Object_id,
-                            updatedTitle,
-                            updatedDescription);
-
-                        if (success)
-                        {
-                            _logger.LogInformation("✅ Activity {ActivityId} updated with weather!", webhookEvent.Object_id);
-                            var processedActivity = new ProcessedActivity
-                            {
-                                Id = webhookEvent.Object_id,
-
-                                AthleteId = webhookEvent.Owner_id,
-                                ProcessedAt = DateTime.UtcNow,
-                                WeatherDescription = weather.Description,
-                                Temperature = weather.Temperature
-                            };
-                            dbContext.ProcessedActivities.Add(processedActivity);
-                            await dbContext.SaveChangesAsync();
-                        }
-                        else
-                        {
-                            _logger.LogWarning("Failed to update activity description");
-                        }
+                        updatedDescription = BuildDescriptionWithWeather(activity.Description, weather);
+                        updatedTitle = BuildTitleWithWeather(activity.Name, weather, activity.Start_date.Hour >= 6 && activity.Start_date.Hour <= 18);
+                        activityUpdated = true;
                     }
                     else
                     {
@@ -232,6 +215,35 @@ public class StravaWebhookService : IStravaWebhook
                 else
                 {
                     _logger.LogWarning("Activity {ActivityId} has no GPS coordinates", webhookEvent.Object_id);
+                }
+
+                if (activityUpdated)
+                {
+                    var success = await UpdateActivityAsync(
+                            token.AccessToken,
+                            webhookEvent.Object_id,
+                            updatedTitle,
+                            updatedDescription);
+
+                    if (success)
+                    {
+                        _logger.LogInformation("✅ Activity {ActivityId} updated !", webhookEvent.Object_id);
+                        var processedActivity = new ProcessedActivity
+                        {
+                            Id = webhookEvent.Object_id,
+
+                            AthleteId = webhookEvent.Owner_id,
+                            ProcessedAt = DateTime.UtcNow,
+                            WeatherDescription = weather?.Description ?? "",
+                            Temperature = weather?.Temperature ?? 0
+                        };
+                        dbContext.ProcessedActivities.Add(processedActivity);
+                        await dbContext.SaveChangesAsync();
+                    }
+                    else
+                    {
+                        _logger.LogWarning("Failed to update activity description");
+                    }
                 }
             }
             else
@@ -243,6 +255,40 @@ public class StravaWebhookService : IStravaWebhook
         {
             _logger.LogError(ex, "Error processing activity event");
         }
+    }
+
+    private (string, bool) AddSportEmojiToTitle(string name, SportType sport_type)
+    {
+        if (Array.Exists([SportType.GravelRide, SportType.Ride], element => element == sport_type))
+        {
+            return ($"🚴 {name}", true);
+        }
+        else if (sport_type == SportType.VirtualRide)
+        {
+            return ($"🚴‍♂️🏠 {name}", true);
+        }
+        else if (Array.Exists([SportType.Run, SportType.TrailRun], element => element == sport_type))
+        {
+            return ($"🏃 {name}", true);
+        }
+        else if (sport_type == SportType.VirtualRun)
+        {
+            return ($"🏃‍♂️🏠 {name}", true);
+        }
+        else if (sport_type == SportType.Hike)
+        {
+            return ($"🥾 {name}", true);
+        }
+        else if (sport_type == SportType.MountainBikeRide)
+        {
+            return ($"🚵 {name}", true);
+        }
+        else if (sport_type == SportType.Walk)
+        {
+            return ($"🚶 {name}", true);
+        }
+
+        return (name, false);
     }
 
     private string BuildTitleWithWeather(string currentTitle, WeatherData weather, bool isDaytime)
@@ -299,7 +345,7 @@ public class StravaWebhookService : IStravaWebhook
             return $"{currentDescription}\n\n{weatherInfo}";
         }
 
-        if(_configuration["Environment"] == "Development")
+        if (_configuration["Environment"] == "Development")
         {
             weatherInfo = $"[DEV MODE] {weatherInfo}";
         }
