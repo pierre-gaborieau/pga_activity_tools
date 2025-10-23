@@ -39,7 +39,6 @@ public class VersionService : IVersion
 
     public VersionInfo GetVersionInfo()
     {
-        var a = _versionInfo;
-        return a;
+        return _versionInfo;
     }
 }
