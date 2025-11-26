@@ -338,7 +338,7 @@ public class StravaWebhookService : IStravaWebhook
 
     private string BuildDescriptionWithWeather(string? currentDescription, WeatherData weather)
     {
-        var weatherInfo = $@"🌡️ {weather.Temperature}°C (ressenti : {weather.FeelsLike}°C) ☁️ {weather.Description} 💨 Vent : {weather.WindSpeed} m/s";
+        var weatherInfo = $@"🌡️ {weather.Temperature}°C (ressenti : {weather.FeelsLike}°C) ☁️ {weather.Description} 💨 Vent : {weather.WindSpeed} m/s du {buildWeatherDirection(weather.WindAngle)}";
         
         if (_configuration["Environment"] == "Development")
         {
@@ -351,6 +351,19 @@ public class StravaWebhookService : IStravaWebhook
         }
 
         return weatherInfo;
+    }
+
+    private string buildWeatherDirection(double windAngle)
+    {
+        if (windAngle >= 337.5 || windAngle < 22.5) return "N";
+        if (windAngle >= 22.5 && windAngle < 67.5) return "NE";
+        if (windAngle >= 67.5 && windAngle < 112.5) return "E";
+        if (windAngle >= 112.5 && windAngle < 157.5) return "SE";
+        if (windAngle >= 157.5 && windAngle < 202.5) return "S";
+        if (windAngle >= 202.5 && windAngle < 247.5) return "SW";
+        if (windAngle >= 247.5 && windAngle < 292.5) return "W";
+        if (windAngle >= 292.5 && windAngle < 337.5) return "NW";
+        return "N"; // Default
     }
 
     private async Task<bool> UpdateActivityAsync(string accessToken, long activityId, string title, string description)
