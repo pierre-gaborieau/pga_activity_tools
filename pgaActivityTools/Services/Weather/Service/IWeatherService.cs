@@ -48,6 +48,7 @@ public class WeatherService : IWeather
                 FeelsLike = Math.Round(weatherResponse.Main?.Feels_like ?? 0, 1),
                 Humidity = weatherResponse.Main?.Humidity ?? 0,
                 WindSpeed = Math.Round(weatherResponse.Wind?.Speed ?? 0, 1),
+                WindAngle = weatherResponse.Wind?.Deg ?? 0,
                 Cloudiness = weatherResponse.Clouds?.All ?? 0,
                 CityName = weatherResponse.Name ?? "Unknown",
                 Timestamp = timestamp
@@ -90,6 +91,7 @@ public class MainWeather
 public class Wind
 {
     public double Speed { get; set; }
+    public double Deg { get; set; }
 }
 
 public class Clouds
