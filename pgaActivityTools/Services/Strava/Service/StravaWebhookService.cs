@@ -360,9 +360,9 @@ public class StravaWebhookService : IStravaWebhook
         if (windAngle >= 67.5 && windAngle < 112.5) return "E";
         if (windAngle >= 112.5 && windAngle < 157.5) return "SE";
         if (windAngle >= 157.5 && windAngle < 202.5) return "S";
-        if (windAngle >= 202.5 && windAngle < 247.5) return "SW";
-        if (windAngle >= 247.5 && windAngle < 292.5) return "W";
-        if (windAngle >= 292.5 && windAngle < 337.5) return "NW";
+        if (windAngle >= 202.5 && windAngle < 247.5) return "SO";
+        if (windAngle >= 247.5 && windAngle < 292.5) return "O";
+        if (windAngle >= 292.5 && windAngle < 337.5) return "NO";
         return "N"; // Default
     }
 
