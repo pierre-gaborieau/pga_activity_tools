@@ -18,10 +18,6 @@ using pgaActivityTools.Services.Weather.Service;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// PRINT CONNECTION STRING FOR DEBUGGING
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-Console.WriteLine($"Connection String: {connectionString}");
-
 builder.Services.AddOpenApi();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
